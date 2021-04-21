@@ -1,0 +1,37 @@
+﻿@model Synonyms.Models.WordEntry
+@{
+    ViewData["Title"] = "Results";
+}
+
+<form method="post" asp-action="Search">
+    <div>
+        <label asp-for="Word">Word: </label>
+        <input asp-for="Word" class="form-control" type="text" />
+
+        @foreach (string s in ViewBag.SynList)
+        {
+            <input asp-for="SynOrAnt" type="radio" value="@s" />@s
+        }
+        <br />
+        <input type="submit" class="submit" value="Search" />
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <td><h4>@ViewBag.SearchWord</h4>
+        </tr>
+    </thead>
+    
+    <tbody>
+        @foreach (string s in ViewBag.RtnWords)
+        {
+            <tr>
+                <td>@s</td>
+            </tr>            
+        }
+    </tbody>
+</table>
+
+<br />
