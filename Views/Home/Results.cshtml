@@ -17,37 +17,48 @@
         <input type="submit" class="submit" value="Search" />
     </div>
 </form>
-
-<table>
-    <thead>
-        <tr>
-            <td><h4>@ViewBag.SearchWord</h4><h4>@ViewBag.SearchType</h4>
-        </tr>
-    </thead>
-    
-    <tbody>
-        @foreach (string s in ViewBag.RtnWords)
-        {
+@if (ViewBag.Other == "False")
+{
+    <table>
+        <thead>
             <tr>
-                <td>
-                    <table>
-                        <tr>
-                            <td>
-                                <form method="post" asp-action="Results">
-                                    <input asp-for="Word" type="hidden" value="@s " />
-                                    <input class="synsAndAntButtons" type="submit" value="@s " />
-                                </form>
+                <td><h4>@ViewBag.SearchWord</h4><h4>@ViewBag.SearchType</h4>
+            </tr>
+        </thead>
 
-                            </td>
-                        </tr>
-                    </table>
-                    
+        <tbody>
+            @foreach (string s in ViewBag.RtnWords)
+            {
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <form method="post" asp-action="Results">
+                                        <input asp-for="Word" type="hidden" value="@s " />
+                                        <input class="synsAndAntButtons" type="submit" value="@s " />
+                                    </form>
 
-                </td>
-                
-            </tr>             
-        }
-    </tbody>
-</table>
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    </td>
+
+                </tr>
+
+            }
+        </tbody>
+    </table>
+} else
+{
+    @foreach (string s in ViewBag.RtnWords)
+    {
+        <p>@s</p>
+    }
+
+}
+
 
 <br />

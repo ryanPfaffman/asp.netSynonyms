@@ -1,5 +1,21 @@
 ﻿@model Synonyms.Models.WordEntry
 
+<form method="post" asp-action="Search">
+    <div>
+        <label asp-for="Word">Word: </label>
+        <input asp-for="Word" class="form-control" type="text" />
+
+        @foreach (string s in ViewBag.SynList)
+        {
+            <input asp-for="SynOrAnt" type="radio" value="@s" />@s
+        }
+        <br />        
+        
+        <input type="submit" class="submit" value="Search" />
+            
+    </div>
+</form>
+
 <p>Dictionary Page</p>
 <p>Word: @ViewBag.SearchWordDict</p>
 @foreach(string s in ViewBag.DictionaryString)

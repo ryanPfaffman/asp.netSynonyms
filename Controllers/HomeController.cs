@@ -21,7 +21,8 @@ namespace Synonyms.Controllers
         public string[] synList = new string[]
         {
             "Synonym",
-            "Antonym"
+            "Antonym",
+            "Definition"
         };
 
         public static string[] GetSynonyms(string word)
@@ -104,6 +105,7 @@ namespace Synonyms.Controllers
             return rtnS;
 
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]//built-in security
         public IActionResult Search(WordEntry obj)
@@ -122,17 +124,22 @@ namespace Synonyms.Controllers
             ViewBag.rtnWords = rtnWords;
             */
             string[] rtnWords = new string[] { };
+            ViewBag.Other = "False";
 
             if (obj.SynOrAnt == "Synonym")
             {
-                rtnWords = GetSynonyms(obj.Word);
+                rtnWords = GetSynonyms(obj.Word.Trim());
+            } else if (obj.SynOrAnt == "Antonym")
+            {
+                rtnWords = GetAntonyms(obj.Word.Trim());
             } else
             {
-                rtnWords = GetAntonyms(obj.Word);
+                rtnWords = GetDefinition(obj.Word.Trim());
+                ViewBag.Other = "True";
             }
            
             //needs toTitle method
-            ViewBag.SearchWord = ToTitle(obj.Word);
+            ViewBag.SearchWord = ToTitle(obj.Word.Trim());
             ViewBag.SearchType = obj.SynOrAnt + "s";
 
             ViewBag.RtnWords = rtnWords;
@@ -140,10 +147,11 @@ namespace Synonyms.Controllers
 
             return View("Results");
         }
-
+        
         public IActionResult Results()
         {
             ViewBag.SynList = synList;
+
 
             return View();
         }
@@ -151,11 +159,10 @@ namespace Synonyms.Controllers
         [HttpPost]
         public IActionResult Results(DictionaryWord obj)
         {
-            ViewBag.DictionaryString = GetDefinition(obj.Word);
-            ViewBag.SearchWordDict = obj.Word;
-            
-
-
+            ViewBag.DictionaryString = GetDefinition(obj.Word.Trim());            
+            ViewBag.SearchWordDict = ToTitle(obj.Word.Trim());
+            ViewBag.SynList = synList;
+           
             return View("Dictionary");
         }
         public static string[] GetDefinition(string word)
@@ -330,9 +337,15 @@ namespace Synonyms.Controllers
             return rtnL;
         }
 
-        public IActionResult Dictionary()
+        [HttpGet]
+        public IActionResult Dictionary(WordEntry obj)
         {
             ViewBag.DictionaryString = "";
+            ViewBag.SynList = synList;
+            if (obj.Word != "")
+            {
+                ViewBag.DictionaryString = GetDefinition(obj.Word.Trim());
+            }
 
             return View();
         }        
