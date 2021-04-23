@@ -1,0 +1,8 @@
+﻿@model Synonyms.Models.WordEntry
+
+<p>Dictionary Page</p>
+<p>Word: @ViewBag.SearchWordDict</p>
+@foreach(string s in ViewBag.DictionaryString)
+            {
+                <p>@s</p>
+            }

@@ -1,4 +1,5 @@
 ﻿@model Synonyms.Models.WordEntry
+
 @{
     ViewData["Title"] = "Results";
 }
@@ -20,7 +21,7 @@
 <table>
     <thead>
         <tr>
-            <td><h4>@ViewBag.SearchWord</h4>
+            <td><h4>@ViewBag.SearchWord</h4><h4>@ViewBag.SearchType</h4>
         </tr>
     </thead>
     
@@ -28,8 +29,23 @@
         @foreach (string s in ViewBag.RtnWords)
         {
             <tr>
-                <td>@s</td>
-            </tr>            
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                <form method="post" asp-action="Results">
+                                    <input asp-for="Word" type="hidden" value="@s " />
+                                    <input class="synsAndAntButtons" type="submit" value="@s " />
+                                </form>
+
+                            </td>
+                        </tr>
+                    </table>
+                    
+
+                </td>
+                
+            </tr>             
         }
     </tbody>
 </table>

@@ -16,8 +16,9 @@ namespace Synonyms.Data
 
         }
 
-        //this is how you can make migrations to the database
-        public DbSet<WordEntry> WordEntries { get; set; }        
+        //this is how you can make migrations to the database (final step)
+        public DbSet<WordEntry> WordEntries { get; set; }
+        public DbSet<DictionaryWord> DictionaryWords { get; set; }
 
     }
 }

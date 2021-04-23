@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -81,15 +82,37 @@ namespace Synonyms.Controllers
             return View();
         }
 
+        public static string ToTitle(string s)
+        {
+            string rtnS = "";
+            char[] sChar = s.ToCharArray();
+            int i = 0;
+
+            foreach (char c in sChar)
+            {
+                if (i == 0)
+                {
+                    rtnS += Convert.ToString(c).ToUpper();
+                } else
+                {
+                    rtnS += Convert.ToString(c).ToLower();
+                }
+
+                i++;
+            }
+
+            return rtnS;
+
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]//built-in security
         public IActionResult Search(WordEntry obj)
         {
-            
+            /*
             _db.WordEntries.Add(obj);
             _db.SaveChanges();
 
-            /*
+            
             string SWord = obj.Word;
             Console.WriteLine(obj.SynOrAnt);
 
@@ -106,9 +129,12 @@ namespace Synonyms.Controllers
             } else
             {
                 rtnWords = GetAntonyms(obj.Word);
-            }            
+            }
+           
+            //needs toTitle method
+            ViewBag.SearchWord = ToTitle(obj.Word);
+            ViewBag.SearchType = obj.SynOrAnt + "s";
 
-            ViewBag.SearchWord = obj.SynOrAnt + "s";
             ViewBag.RtnWords = rtnWords;
             ViewBag.SynList = synList;
 
@@ -121,6 +147,195 @@ namespace Synonyms.Controllers
 
             return View();
         }
+
+        [HttpPost]
+        public IActionResult Results(DictionaryWord obj)
+        {
+            ViewBag.DictionaryString = GetDefinition(obj.Word);
+            ViewBag.SearchWordDict = obj.Word;
+            
+
+
+            return View("Dictionary");
+        }
+        public static string[] GetDefinition(string word)
+        {
+            var client = new RestClient($"https://twinword-word-graph-dictionary.p.rapidapi.com/definition/?entry={word}");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("x-rapidapi-key", "40fa536d21msh6eaac19e2c7d2fap140d60jsn5ca9a5f58d95");
+            request.AddHeader("x-rapidapi-host", "twinword-word-graph-dictionary.p.rapidapi.com");
+            IRestResponse response = client.Execute(request);
+            string responseS = response.Content;
+
+            List<string> nounsL = GetDefs(responseS);
+
+            Console.WriteLine($"getDefsRtn: [{string.Join("::::", nounsL)}]");
+            //responseS = Regex.Replace(responseS, @"[^a-zA-Z :]", "");
+            //Console.WriteLine(responseS);
+
+            //string[] list = responseS.Split("nou");
+
+            //Console.WriteLine($"{string.Join(",", list)}");
+
+
+            return nounsL.ToArray();
+        }
+
+        public static List<string> GetDefs(string s)
+        {
+            List<string> rtnL = new List<string>();
+
+            char[] sAr = s.ToCharArray();
+            int sArL = sAr.Length;
+            double start = Double.PositiveInfinity;
+            string rtnS = "";
+            bool nouns = true;
+            bool verbs = false;
+            bool adverbs = false;
+            bool adjectives = false;
+
+            for (int x = 0; x < sArL; x++)
+            {
+                if (nouns)
+                {
+                    if (x < sArL - 5)
+                    {
+                        //checkForNoun
+                        if ((sAr[x] == 'n' && sAr[x + 1] == 'o' && sAr[x + 2] == 'u') && (sAr[x + 3] != 'n'))
+                        {
+                            start = (int)x + 4;
+                        }
+                    }
+
+                    if (s[x] == '\\')
+                    {
+                        start = Double.PositiveInfinity;
+                        if (rtnS != "")
+                        {
+                            rtnL.Add("Noun:");
+                            rtnL.Add(rtnS);
+                        }
+
+                        rtnS = "";
+                    }
+
+                    if (x > start)
+                    {
+                        rtnS += sAr[x];
+                    }
+
+                    //check adverbs
+                    if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == 'e' && sAr[x + 3] == 'r' && sAr[x + 3] == 'b'))
+                    {
+                        nouns = false;
+                        verbs = false;
+                        adjectives = false;
+                        adverbs = true;
+                        if (rtnS != "")
+                        {
+                            rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                            rtnL.Add("Noun:");
+                            rtnL.Add(rtnS);
+                            rtnS = "";
+                        }
+
+                    }
+                    //check adjectives
+                    if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == 'e' && sAr[x + 3] == 'c' && sAr[x + 3] == 't'))
+                    {
+                        nouns = false;
+                        verbs = false;
+                        adjectives = true;
+                        adverbs = false;
+                        if (rtnS != "")
+                        {
+                            rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                            rtnL.Add("Noun:");
+                            rtnL.Add(rtnS);
+                            rtnS = "";
+                        }
+
+                    }
+                }
+
+                if (verbs)
+                {
+                    if (x < sArL - 7)
+                    {
+                        if (verbs && (sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == 'e' && sAr[x + 4] == 'r' && sAr[x + 5] == 'b'))
+                        {
+                            if (rtnS != "")
+                            {
+                                rtnS = rtnS.Substring(0, rtnS.Length - 3);
+                                rtnL.Add("Verb");
+                                rtnL.Add(rtnS);
+                                rtnS = "";
+                                start = Double.PositiveInfinity;
+                            }
+
+                            nouns = false;
+                            verbs = true;
+                            adjectives = false;
+                            adverbs = false;
+                        }
+
+                        if ((sAr[x] == 'v' && sAr[x + 1] == 'r' && sAr[x + 2] == 'b'))
+                        {
+                            start = (int)x + 4;
+                        }
+
+                        if (s[x] == '\\')
+                        {
+                            start = Double.PositiveInfinity;
+                            if (rtnS != "")
+                            {
+                                rtnL.Add("Verb:");
+                                rtnL.Add(rtnS);
+                            }
+
+                            rtnS = "";
+                        }
+
+                        if (x > start)
+                        {
+                            rtnS += sAr[x];
+                        }
+                    }
+                }
+                if (x < sArL - 5)
+                {
+                    if (nouns && (sAr[x] == 'v' && sAr[x + 1] == 'e' && sAr[x + 2] == 'r' && sAr[x + 3] == 'b'))
+                    {
+                        nouns = false;
+                        verbs = true;
+                        if (rtnS != "")
+                        {
+                            rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                            rtnL.Add("Noun:");
+                            rtnL.Add(rtnS);
+                            rtnS = "";
+                            start = Double.PositiveInfinity;
+                        }
+                        
+                    }
+                }
+
+            }
+
+            if (rtnS != "")
+            {
+                rtnL.Add("Noun:");
+                rtnL.Add(rtnS);
+            }
+            return rtnL;
+        }
+
+        public IActionResult Dictionary()
+        {
+            ViewBag.DictionaryString = "";
+
+            return View();
+        }        
 
         public IActionResult Index()
         {

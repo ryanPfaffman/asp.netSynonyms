@@ -431,3 +431,4 @@
 /Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/bin/Debug/netcoreapp5.0/RestSharp.dll
 /Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/obj/Debug/netcoreapp5.0/Razor/Views/Home/Search.cshtml.g.cs
 /Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/obj/Debug/netcoreapp5.0/Razor/Views/Home/Results.cshtml.g.cs
+/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/obj/Debug/netcoreapp5.0/Razor/Views/Home/Dictionary.cshtml.g.cs
