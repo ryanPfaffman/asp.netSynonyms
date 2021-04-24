@@ -126,21 +126,29 @@ namespace Synonyms.Controllers
             */
             string[] rtnWords = new string[] { };
             ViewBag.Other = "False";
+            
+            if (obj.Word != null)
+            {
+                if (obj.SynOrAnt == "Synonym")
+                {
+                    rtnWords = GetSynonyms(obj.Word.Trim());
+                }
+                else if (obj.SynOrAnt == "Antonym")
+                {
+                    rtnWords = GetAntonyms(obj.Word.Trim());
+                }
+                else
+                {
+                    rtnWords = GetDefinition(obj.Word.Trim());
+                    ViewBag.Other = "True";
+                }
 
-            if (obj.SynOrAnt == "Synonym")
-            {
-                rtnWords = GetSynonyms(obj.Word.Trim());
-            } else if (obj.SynOrAnt == "Antonym")
-            {
-                rtnWords = GetAntonyms(obj.Word.Trim());
+                ViewBag.SearchWord = ToTitle(obj.Word.Trim());
             } else
             {
-                rtnWords = GetDefinition(obj.Word.Trim());
-                ViewBag.Other = "True";
-            }
-           
-            //needs toTitle method
-            ViewBag.SearchWord = ToTitle(obj.Word.Trim());
+                ViewBag.SearchWord = "Please Enter Text";
+            }                                  
+            
             ViewBag.SearchType = obj.SynOrAnt + "s";
 
             ViewBag.RtnWords = rtnWords;
