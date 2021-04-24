@@ -79,6 +79,7 @@ namespace Synonyms.Controllers
         {
             ViewBag.SynList = synList;
             ViewBag.RtnWords = new string[] { };
+            ViewBag.TestDef = GetDefinition("quickly");
 
             return View();
         }
@@ -174,6 +175,7 @@ namespace Synonyms.Controllers
             IRestResponse response = client.Execute(request);
             string responseS = response.Content;
 
+            Console.WriteLine($"response: {responseS}");
             List<string> nounsL = GetDefs(responseS);
 
             Console.WriteLine($"getDefsRtn: [{string.Join("::::", nounsL)}]");
@@ -196,6 +198,7 @@ namespace Synonyms.Controllers
             int sArL = sAr.Length;
             double start = Double.PositiveInfinity;
             string rtnS = "";
+
             bool nouns = true;
             bool verbs = false;
             bool adverbs = false;
@@ -203,6 +206,7 @@ namespace Synonyms.Controllers
 
             for (int x = 0; x < sArL; x++)
             {
+                //nouns
                 if (nouns)
                 {
                     if (x < sArL - 5)
@@ -216,7 +220,7 @@ namespace Synonyms.Controllers
 
                     if (s[x] == '\\')
                     {
-                        start = Double.PositiveInfinity;
+
                         if (rtnS != "")
                         {
                             rtnL.Add("Noun:");
@@ -224,6 +228,7 @@ namespace Synonyms.Controllers
                         }
 
                         rtnS = "";
+                        start = Double.PositiveInfinity;
                     }
 
                     if (x > start)
@@ -231,6 +236,23 @@ namespace Synonyms.Controllers
                         rtnS += sAr[x];
                     }
 
+                    //check verbs
+                    if (sAr[x] == 'v' && sAr[x + 1] == 'e' && sAr[x + 2] == 'r' && sAr[x + 3] == 'b')
+                    {
+                        nouns = false;
+                        verbs = true;
+                        adjectives = false;
+                        adverbs = false;
+                        if (rtnS != "")
+                        {
+                            rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                            rtnL.Add("Noun:");
+                            rtnL.Add(rtnS);
+                            rtnS = "";
+                            start = Double.PositiveInfinity;
+                        }
+
+                    }
                     //check adverbs
                     if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == 'e' && sAr[x + 3] == 'r' && sAr[x + 3] == 'b'))
                     {
@@ -241,14 +263,15 @@ namespace Synonyms.Controllers
                         if (rtnS != "")
                         {
                             rtnS = rtnS.Substring(0, rtnS.Length - 4);
-                            rtnL.Add("Noun:");
+                            rtnL.Add("Verb:");
                             rtnL.Add(rtnS);
                             rtnS = "";
+                            start = Double.PositiveInfinity;
                         }
 
                     }
                     //check adjectives
-                    if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == 'e' && sAr[x + 3] == 'c' && sAr[x + 3] == 't'))
+                    if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == 'e' && sAr[x + 4] == 'c' && sAr[x + 5] == 't'))
                     {
                         nouns = false;
                         verbs = false;
@@ -257,35 +280,38 @@ namespace Synonyms.Controllers
                         if (rtnS != "")
                         {
                             rtnS = rtnS.Substring(0, rtnS.Length - 4);
-                            rtnL.Add("Noun:");
+                            rtnL.Add("Adjective:");
                             rtnL.Add(rtnS);
                             rtnS = "";
+                            start = Double.PositiveInfinity;
                         }
 
                     }
-                }
 
-                if (verbs)
-                {
-                    if (x < sArL - 7)
+                    if (x < sArL - 5)
                     {
-                        if (verbs && (sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == 'e' && sAr[x + 4] == 'r' && sAr[x + 5] == 'b'))
+                        if ((sAr[x] == 'v' && sAr[x + 1] == 'e' && sAr[x + 2] == 'r' && sAr[x + 3] == 'b'))
                         {
+                            nouns = false;
+                            verbs = true;
                             if (rtnS != "")
                             {
-                                rtnS = rtnS.Substring(0, rtnS.Length - 3);
-                                rtnL.Add("Verb");
+                                rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                                rtnL.Add("Noun:");
                                 rtnL.Add(rtnS);
                                 rtnS = "";
                                 start = Double.PositiveInfinity;
                             }
 
-                            nouns = false;
-                            verbs = true;
-                            adjectives = false;
-                            adverbs = false;
                         }
+                    }
+                }
 
+                //verbs
+                if (verbs)
+                {
+                    if (x < sArL - 7)
+                    {
                         if ((sAr[x] == 'v' && sAr[x + 1] == 'r' && sAr[x + 2] == 'b'))
                         {
                             start = (int)x + 4;
@@ -293,7 +319,7 @@ namespace Synonyms.Controllers
 
                         if (s[x] == '\\')
                         {
-                            start = Double.PositiveInfinity;
+
                             if (rtnS != "")
                             {
                                 rtnL.Add("Verb:");
@@ -301,39 +327,174 @@ namespace Synonyms.Controllers
                             }
 
                             rtnS = "";
+                            start = Double.PositiveInfinity;
                         }
 
                         if (x > start)
                         {
                             rtnS += sAr[x];
                         }
+                        //check adverb
+                        if (verbs && (sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == 'e' && sAr[x + 4] == 'r' && sAr[x + 5] == 'b'))
+                        {
+                            if (rtnS != "")
+                            {
+                                rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                                rtnL.Add("Verb");
+                                rtnL.Add(rtnS);
+                                rtnS = "";
+                                start = Double.PositiveInfinity;
+                            }
+
+                            nouns = false;
+                            verbs = false;
+                            adjectives = false;
+                            adverbs = true;
+                        }
+
+                        //check adjectives
+                        if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == 'e' && sAr[x + 4] == 'c' && sAr[x + 5] == 't'))
+                        {
+                            nouns = false;
+                            verbs = false;
+                            adjectives = true;
+                            adverbs = false;
+                            if (rtnS != "")
+                            {
+                                rtnS = rtnS.Substring(0, rtnS.Length - 4);
+                                rtnL.Add("Adjective:");
+                                rtnL.Add(rtnS);
+                                rtnS = "";
+                                start = Double.PositiveInfinity;
+                            }
+
+                        }
                     }
                 }
-                if (x < sArL - 5)
+
+                //adverbs
+                if (adverbs)
                 {
-                    if (nouns && (sAr[x] == 'v' && sAr[x + 1] == 'e' && sAr[x + 2] == 'r' && sAr[x + 3] == 'b'))
+                    if (x < sArL - 4)
+                    {
+                        //find beginning of def
+                        if (sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'v' && sAr[x + 3] == ')')
+                        {
+                            start = (int)x + 4;
+                        }
+                    }                    
+
+                    //know where to end def
+                    if (s[x] == '\\')
+                    {
+
+                        if (rtnS != "")
+                        {
+                            rtnL.Add("Adverb:");
+                            rtnL.Add(rtnS);
+                        }
+
+                        rtnS = "";
+                        start = Double.PositiveInfinity;
+                    }
+
+                    //build string to add to return list
+                    if (x > start)
+                    {
+                        rtnS += sAr[x];
+                    }
+
+                    //check adjectives
+                    if ((sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == 'e' && sAr[x + 4] == 'c' && sAr[x + 5] == 't'))
                     {
                         nouns = false;
-                        verbs = true;
+                        verbs = false;
+                        adjectives = true;
+                        adverbs = false;
                         if (rtnS != "")
                         {
                             rtnS = rtnS.Substring(0, rtnS.Length - 4);
-                            rtnL.Add("Noun:");
+                            rtnL.Add("Adjective:");
                             rtnL.Add(rtnS);
                             rtnS = "";
                             start = Double.PositiveInfinity;
                         }
-                        
+
                     }
                 }
 
+                //adjectives
+                if (adjectives)
+                {
+                    if (x < sArL - 4)
+                    {
+                        //find beginning of def
+                        if (sAr[x] == 'a' && sAr[x + 1] == 'd' && sAr[x + 2] == 'j' && sAr[x + 3] == ')')
+                        {
+                            start = (int)x + 4;
+                        }
+                    }                    
+
+                    //know where to end def
+                    if (s[x] == '\\')
+                    {
+
+                        if (rtnS != "")
+                        {
+                            rtnL.Add("Adjective:");
+                            rtnL.Add(rtnS);
+                        }
+
+                        rtnS = "";
+                        start = Double.PositiveInfinity;
+                    }
+
+                    //build string to add to return list
+                    if (x > start)
+                    {
+                        rtnS += sAr[x];
+                    }
+
+                    //check for break
+                    if (sAr[x] == 'i' && sAr[x + 1] == 'p' && sAr[x + 2] == 'a')
+                    {
+                        if (rtnS != "")
+                        {
+                            rtnL.Add("Adjective:");
+                            rtnL.Add(rtnS.Substring(0, rtnS.Length - 1 - 4));
+                        }
+
+                        rtnS = "";
+                        start = Double.PositiveInfinity;
+                    }
+                }
             }
 
+            //check for final string
             if (rtnS != "")
             {
-                rtnL.Add("Noun:");
-                rtnL.Add(rtnS);
+                if (nouns)
+                {
+                    rtnL.Add("Noun:");
+                    rtnL.Add(rtnS);
+                }
+                if (verbs)
+                {
+                    rtnL.Add("Verb:");
+                    rtnL.Add(rtnS);
+                }
+                if (adjectives)
+                {
+                    rtnL.Add("Adjective:");
+                    rtnL.Add(rtnS);
+                }
+                if (adverbs)
+                {
+                    rtnL.Add("Adverb:");
+                    rtnL.Add(rtnS);
+                }
             }
+
             return rtnL;
         }
 

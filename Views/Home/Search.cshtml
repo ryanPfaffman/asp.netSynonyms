@@ -8,10 +8,22 @@
         <input asp-for="Word" class="form-control" type="text" />
 
         @foreach (string s in ViewBag.SynList)
+        {
+            if (s == "Synonym")
+            {
+                <input asp-for="SynOrAnt" type="radio" value="@s" checked />@s
+            }
+            else
             {
                 <input asp-for="SynOrAnt" type="radio" value="@s" />@s
             }
+        }       
         <br />
         <input type="submit" class="submit" value="Search" />
     </div>
 </form>
+
+@foreach(string s in ViewBag.TestDef)
+            { 
+                <p>@s</p>
+            }
