@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RestSharp;
+using RestSharp;//better than HTTPClient imo, I could not find a way to make that one work
 using Synonyms.Models;
 using Synonyms.Data;
 using System.Text.RegularExpressions;
@@ -33,7 +33,8 @@ namespace Synonyms.Controllers
             request.AddHeader("x-rapidapi-host", "languagetools.p.rapidapi.com");
             IRestResponse response = client.Execute(request);
 
-            string firstString = Regex.Replace(response.Content, @"[^a-zA-Z ,]", "");
+            string firstString = Regex.Replace(response.Content, @"[^a-zA-Z ,]", "");//used to take me like
+            //thousands of lines to do that right there ^^
 
             string[] rtnArray = firstString.Split(",");
 
@@ -84,6 +85,8 @@ namespace Synonyms.Controllers
             return View();
         }
 
+        //why on earth would it be so hard to have a ToTitle helper function
+        //built into the language?
         public static string ToTitle(string s)
         {
             string rtnS = "";
@@ -166,6 +169,7 @@ namespace Synonyms.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]//prevents cross-site request forgery attacks
         public IActionResult Results(DictionaryWord obj)
         {
             ViewBag.DictionaryString = GetDefinition(obj.Word.Trim());            
@@ -198,6 +202,7 @@ namespace Synonyms.Controllers
             return nounsL.ToArray();
         }
 
+        //I think this sucks and could be much faster        
         public static List<string> GetDefs(string s)
         {
             List<string> rtnL = new List<string>();

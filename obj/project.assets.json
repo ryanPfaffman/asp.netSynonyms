@@ -8880,7 +8880,7 @@
       "outputPath": "/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/ryanpfaffman/.nuget/NuGet/NuGet.Config"
+        "/Users/ryanpfaffman/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp5.0"
