@@ -8873,14 +8873,14 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/Synonyms.csproj",
+      "projectUniqueName": "/Users/ryanpfaffman/Desktop/asp.netSynonyms/Synonyms.csproj",
       "projectName": "Synonyms",
-      "projectPath": "/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/Synonyms.csproj",
+      "projectPath": "/Users/ryanpfaffman/Desktop/asp.netSynonyms/Synonyms.csproj",
       "packagesPath": "/Users/ryanpfaffman/.nuget/packages/",
-      "outputPath": "/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/obj/",
+      "outputPath": "/Users/ryanpfaffman/Desktop/asp.netSynonyms/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/ryanpfaffman/.config/NuGet/NuGet.Config"
+        "/Users/ryanpfaffman/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp5.0"

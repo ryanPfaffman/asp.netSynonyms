@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ytpz6rkvYWlsRa6isQJ/wXLfNxAKleZ87OuiwtWueDRqQQQBjnPbTyAcBtxyh/OfV5hViv80kxd02z8ZbIPo4g==",
+  "dgSpecHash": "Bc3Zcl84NFmcenNDEM1btVYtNXnAWUdy00qoX4vZOZhe/fTK9fpXA+prmTo3Qe6UYKk8c+7vPucfeqigx76GkA==",
   "success": true,
-  "projectFilePath": "/Users/ryanpfaffman/Projects/Synonyms/Synonyms/Synonyms/Synonyms.csproj",
+  "projectFilePath": "/Users/ryanpfaffman/Desktop/asp.netSynonyms/Synonyms.csproj",
   "expectedPackageFiles": [
     "/Users/ryanpfaffman/.nuget/packages/microsoft.aspnetcore.cryptography.internal/5.0.5/microsoft.aspnetcore.cryptography.internal.5.0.5.nupkg.sha512",
     "/Users/ryanpfaffman/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/5.0.5/microsoft.aspnetcore.cryptography.keyderivation.5.0.5.nupkg.sha512",
